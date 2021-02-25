@@ -6,6 +6,7 @@ const root = resolve(__dirname, '../')
 const { getFileList } = require("./utils");
 const chalk = require('chalk');
 
+// 判断命令是否存在
 if (
   !fs.pathExists(`./commands/${commandName}`) ||
   !fs.pathExists(`./commands/${commandName}.js`)
@@ -19,10 +20,14 @@ const mwf = resolve(process.cwd(),"./.mwf");
 const dest = resolve(mwf,"./dist");
 const src = resolve(mwf,"./src");
 
+// 确保三个主要目录存在
+
 fs.ensureDirSync(mwf);
 fs.ensureDirSync(dest);
 fs.ensureDirSync(src);
 
+
+// 获取需要的文件列表，并拷贝未拷贝文件
 getFileList(tempPath).forEach( async (origin) => {
 
   const file = relative(tempPath, origin)
@@ -34,5 +39,11 @@ getFileList(tempPath).forEach( async (origin) => {
   console.log(`has copy ${chalk.green(file)}`)
 });
 
+
+const opt = {
+  rest
+}
+
+// 切换命令执行的目录位置
 process.chdir(mwf)
-require(`./commands/${commandName}`)(rest);
+require(`./commands/${commandName}`)(opt);

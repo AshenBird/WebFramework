@@ -12,7 +12,7 @@ const { render } = require('./dist/server/entry-server.ts')
 
 // determine routes to pre-render from src/pages
 const routesToPrerender = fs
-  .readdirSync(toAbsolute('src/pages'))
+  .readdirSync(toAbsolute('../src/pages'))
   .map((file) => {
     const name = file.replace(/\.vue$/, '').toLowerCase()
     return name === 'home' ? `/` : `/${name}`
