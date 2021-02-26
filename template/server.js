@@ -2,10 +2,16 @@
 const fs = require('fs');
 const path = require('path');
 const c2k = require('koa-connect');
-const http = require("http")
+// const http = require("http")
 const Koa = require("koa")
-const isTest = process.env.NODE_ENV === 'test' || !!process.env.VITE_TEST_BUILD
+const fastify = require('fastify')({
+  logger: true
+})
 const chalk = require("chalk")
+
+
+const isTest = process.env.NODE_ENV === 'test' || !!process.env.VITE_TEST_BUILD
+
 async function createServer(
   root = process.cwd(),
   isProd = process.env.NODE_ENV === 'production'
@@ -49,6 +55,10 @@ async function createServer(
     )
   }
 
+
+  fastify.get('/', async (request, reply) => {
+    return { hello: 'world' }
+  })
   app.use(async (ctx) => {
     const { request, response } = ctx
     try {
@@ -87,8 +97,15 @@ async function createServer(
 
 if (!isTest) {
   console.log(chalk.green("Launching.."))
-  createServer().then(({ app }) =>{
+  createServer().then( async ({ app }) =>{
       console.log(chalk.green("init.."))
+
+      try {
+        await fastify.listen(3000)
+      } catch (err) {
+        fastify.log.error(err)
+        process.exit(1)
+      }
       app.listen(3000, () => console.log('http://localhost:3000'))
     }
   )
